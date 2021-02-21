@@ -12,9 +12,9 @@ namespace Project_FinchControl
     // Description: Starter solution with the helper methods,
     //              opening and closing screens, and the menu
     // Application Type: Console
-    // Author: Velis, John
-    // Dated Created: 1/22/2020
-    // Last Modified: 1/25/2020
+    // Author: Lovell, James
+    // Dated Created: 2/19/2021
+    // Last Modified: 2/20/2021
     //
     // **************************************************
 
@@ -42,6 +42,9 @@ namespace Project_FinchControl
             Console.BackgroundColor = ConsoleColor.White;
         }
 
+        ///all methods and calls should be nestled into the menu screen.     
+
+
         /// <summary>
         /// *****************************************************************
         /// *                     Main Menu                                 *
@@ -54,7 +57,7 @@ namespace Project_FinchControl
             bool quitApplication = false;
             string menuChoice;
 
-            Finch finchRobot = new Finch();
+            Finch Bobert = new Finch();
 
             do
             {
@@ -79,19 +82,19 @@ namespace Project_FinchControl
                 switch (menuChoice)
                 {
                     case "a":
-                        DisplayConnectFinchRobot(finchRobot);
+                        DisplayConnectFinchRobot(Bobert);
                         break;
 
                     case "b":
-                        TalentShowDisplayMenuScreen(finchRobot);
+                        TalentShowDisplayMenuScreen(Bobert);
                         break;
 
                     case "c":
-
+                        DataRecorderDisplayMenuScreen(Bobert);
                         break;
 
                     case "d":
-
+                        AlarmSystemDisplayMenuScreen(Bobert);
                         break;
 
                     case "e":
@@ -99,11 +102,11 @@ namespace Project_FinchControl
                         break;
 
                     case "f":
-                        DisplayDisconnectFinchRobot(finchRobot);
+                        DisplayDisconnectFinchRobot(Bobert);
                         break;
 
                     case "q":
-                        DisplayDisconnectFinchRobot(finchRobot);
+                        DisplayDisconnectFinchRobot(Bobert);
                         quitApplication = true;
                         break;
 
@@ -121,10 +124,10 @@ namespace Project_FinchControl
 
         /// <summary>
         /// *****************************************************************
-        /// *                     Talent Show Menu                          *
+        /// *      method--g-- ^ method--M--  Talent Show Menu            
         /// *****************************************************************
         /// </summary>
-        static void TalentShowDisplayMenuScreen(Finch finchRobot)
+        static void TalentShowDisplayMenuScreen(Finch Bobert)
         {
             Console.CursorVisible = true;
 
@@ -133,15 +136,16 @@ namespace Project_FinchControl
 
             do
             {
-                DisplayScreenHeader("Talent Show Menu");
-
+                DisplayScreenHeader("\tTalent Show Menu");
+                Console.WriteLine();
+                Console.WriteLine("\tThis module is currently under developoment, sorry about the mess!");
+                DisplayContinuePrompt();
                 //
                 // get user menu choice
                 //
                 Console.WriteLine("\ta) Light and Sound");
-                Console.WriteLine("\tb) ");
-                Console.WriteLine("\tc) ");
-                Console.WriteLine("\td) ");
+                Console.WriteLine("\tb) Dance");
+                Console.WriteLine("\tc) Mixing it up");
                 Console.WriteLine("\tq) Main Menu");
                 Console.Write("\t\tEnter Choice:");
                 menuChoice = Console.ReadLine().ToLower();
@@ -152,19 +156,15 @@ namespace Project_FinchControl
                 switch (menuChoice)
                 {
                     case "a":
-                        TalentShowDisplayLightAndSound(finchRobot);
+                        TalentShowDisplayLightAndSound(Bobert);
                         break;
 
                     case "b":
-
+                        TalentShowDisplayDance(Bobert);
                         break;
 
                     case "c":
-
-                        break;
-
-                    case "d":
-
+                        TalentShowDisplayMixingItUp(Bobert);
                         break;
 
                     case "q":
@@ -183,26 +183,223 @@ namespace Project_FinchControl
 
         /// <summary>
         /// *****************************************************************
-        /// *               Talent Show > Light and Sound                   *
+        /// *  method--N-- Talent Show > Light and Sound                   *
         /// *****************************************************************
         /// </summary>
-        /// <param name="finchRobot">finch robot object</param>
-        static void TalentShowDisplayLightAndSound(Finch finchRobot)
+        /// <param name="Bobert">finch robot object</param>
+        static void TalentShowDisplayLightAndSound(Finch Bobert)
         {
             Console.CursorVisible = false;
 
-            DisplayScreenHeader("Light and Sound");
+            DisplayScreenHeader("\tLight and Sound");
 
-            Console.WriteLine("\tThe Finch robot will not show off its glowing talent!");
+            Console.WriteLine("\tThe Finch robot will now show off its glowing talent!");
             DisplayContinuePrompt();
 
-            for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
+            //for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
+            //{
+            //    Bobert.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
+            //    Bobert.noteOn(lightSoundLevel * 100);
+            //}
+
+            //
+            //led flash
+            //
+           
+            Bobert.setLED(255, 0, 0);
+            Bobert.wait(2000);
+            Bobert.setLED(0, 255, 0);
+            Bobert.wait(2000);
+            Bobert.setLED(255, 0, 255);
+            Bobert.wait(2000);
+            Bobert.setLED(0, 0, 0);
+            Bobert.setLED(255, 0, 0);
+            Bobert.wait(2000);
+            Bobert.setLED(0, 255, 0);
+            Bobert.wait(2000);
+            Bobert.setLED(255, 0, 255);
+            Bobert.wait(2000);
+            Bobert.setLED(0, 0, 0);
+
+            for (int numberflashes = 0; numberflashes < 10; numberflashes++)
             {
-                finchRobot.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
-                finchRobot.noteOn(lightSoundLevel * 100);
+                Bobert.setLED(255, 0, 0);
+                Bobert.wait(200);
+                Bobert.setLED(0, 0, 0);
+                Bobert.wait(200);
             }
 
-            DisplayMenuPrompt("Talent Show Menu");
+            for (int x = 0; x < 255; x=x+15)
+            {
+                Bobert.setLED(x, 0, x);
+                Bobert.wait(100);
+            }
+
+            DisplayContinuePrompt();
+            Bobert.setLED(0, 0, 0);
+
+
+            DisplayContinuePrompt();
+            DisplayMenuPrompt("\tTalent Show Menu");
+        }
+        /// <summary>
+        /// *****************************************************************
+        /// *  method--O-- Talent Show > Display Dance                     *
+        /// *****************************************************************
+        /// </summary>
+        /// <param name="Bobert">finch robot object</param>
+        static void TalentShowDisplayDance(Finch Bobert)
+        {
+            DisplayScreenHeader("\tDance!");
+
+           Console.WriteLine("Bobert will now go through his paces!");
+            DisplayContinuePrompt();
+           
+            Console.WriteLine("\tPut your left wheel in!");
+           Bobert.setMotors(250, 0);
+           Bobert.wait(750);
+            Bobert.setMotors(0, 0);
+
+            DisplayContinuePrompt();
+
+            Console.WriteLine("\tTake your left wheel out!");
+           Bobert.setMotors(-250, 0);
+            Bobert.wait(750);
+            Bobert.setMotors(0, 0);
+
+            DisplayContinuePrompt();
+
+            Console.WriteLine("\tPut both wheels in and shake it all about!");
+            Bobert.setMotors(250,250);
+            Bobert.wait(1000);
+            Bobert.setMotors(-250, 250);
+            Bobert.wait(500);
+            Bobert.setMotors(250, -250);
+            Bobert.wait(500);
+            Bobert.setMotors(-250, 250);
+            Bobert.wait(500);
+            Bobert.setMotors(250, -250);
+            Bobert.wait(500);
+            Bobert.setMotors(250, -100);
+            Bobert.wait(1200);
+            Bobert.setMotors(0, 0);
+            Console.WriteLine();
+            Console.WriteLine("\t*Phweh!*");
+            Console.WriteLine();
+            Console.WriteLine("\tAnd that's what the hokey-pokey is all about!");
+            Console.WriteLine();
+            Console.WriteLine("\t... ... ...");
+            Console.WriteLine();
+            Bobert.setMotors(-250, 250);
+            Bobert.wait(100);
+            Bobert.setMotors(250, -250);
+            Bobert.wait(100);
+            Bobert.setMotors(-250, 250);
+            Bobert.wait(100);
+            Bobert.setMotors(250, -250);
+            Bobert.wait(100);
+            Bobert.setMotors(0, 0);
+            Console.WriteLine("\tDancing is fun, but it gets Bobert dizzy!");
+
+            DisplayContinuePrompt();
+
+
+        }
+        /// <summary>
+        /// *****************************************************************
+        /// *  method--P-- Talent Show > Mixing it UP                      *
+        /// *****************************************************************
+        /// </summary>
+        /// <param name="Bobert">finch robot object</param>
+        static void TalentShowDisplayMixingItUp(Finch Bobert)
+        {
+            DisplayScreenHeader("\tMixing It Up");
+            Console.WriteLine();
+            Console.WriteLine("\tmake sound lights, sounds, and movements");
+            // code code code
+            // ramp noise up to creshendo, then back down,
+            // do a circle
+            Bobert.noteOn(600);
+            Bobert.wait(250);
+            Bobert.noteOff();
+            Bobert.noteOn(600);
+            Bobert.wait(250);
+            Bobert.noteOff();
+            Bobert.noteOn(550);
+            Bobert.wait(250);
+            Bobert.noteOff();
+            Bobert.noteOn(600);
+            Bobert.wait(500);
+            Bobert.noteOff();
+
+            bool validResponse;
+            string userResponse;
+            int frequency;
+            do
+            {
+                validResponse = true;
+
+                Console.Write($"\tfrequncy:");
+                userResponse = Console.ReadLine();
+
+                if (!int.TryParse(userResponse, out frequency))
+                {
+                    Console.WriteLine("\t\tPlease enter a proper number.");
+                    validResponse = false;
+                }
+
+            } while (!validResponse);
+
+            Bobert.noteOn(frequency);
+            Bobert.wait(500);
+            Bobert.noteOff();
+
+            Console.WriteLine("Was that your note?");
+            DisplayContinuePrompt();
+
+
+
+
+
+
+
+            //ask user for flashes and give back, double check with velis about all components
+            DisplayContinuePrompt();
+        }
+
+        #endregion
+
+        #region DATA RECORDER
+        /// <summary>
+        /// *****************************************************************
+        /// method--H-- Data recorder under dev
+        /// *****************************************************************
+        /// </summary>
+        static void DataRecorderDisplayMenuScreen(Finch Bobert)
+        {
+            DisplayScreenHeader("\tData recorder");
+            Console.WriteLine();
+            Console.WriteLine("\tModule is under development");
+            Console.WriteLine();
+            DisplayContinuePrompt();
+        }
+        #endregion
+
+        #region ALARM SYSTEM
+
+        /// <summary>
+        /// *****************************************************************
+        /// Mehtod--I--, ALARM SYSTEM under dev
+        /// *****************************************************************
+        /// </summary>
+        static void AlarmSystemDisplayMenuScreen(Finch Bobert)
+        {
+            DisplayScreenHeader("Alarm System");
+            Console.WriteLine();
+            Console.WriteLine("\tModule is under development");
+            Console.WriteLine();
+            DisplayContinuePrompt();
+
         }
 
         #endregion
@@ -211,34 +408,34 @@ namespace Project_FinchControl
 
         /// <summary>
         /// *****************************************************************
-        /// *               Disconnect the Finch Robot                      *
+        /// *     Method--F-- Disconnect the Finch Robot                     
         /// *****************************************************************
         /// </summary>
-        /// <param name="finchRobot">finch robot object</param>
-        static void DisplayDisconnectFinchRobot(Finch finchRobot)
+        /// <param name="Bobert">finch robot object</param>
+        static void DisplayDisconnectFinchRobot(Finch Bobert)
         {
             Console.CursorVisible = false;
 
-            DisplayScreenHeader("Disconnect Finch Robot");
+            DisplayScreenHeader("\tDisconnect Finch Robot");
 
             Console.WriteLine("\tAbout to disconnect from the Finch robot.");
             DisplayContinuePrompt();
 
-            finchRobot.disConnect();
+            Bobert.disConnect();
 
-            Console.WriteLine("\tThe Finch robot is now disconnect.");
+            Console.WriteLine("\tThe Finch robot is now disconnected.");
 
-            DisplayMenuPrompt("Main Menu");
+            DisplayMenuPrompt("\tMain Menu");
         }
 
         /// <summary>
         /// *****************************************************************
-        /// *                  Connect the Finch Robot                      *
+        /// *     Method--E-- Connect the Finch Robot                      
         /// *****************************************************************
         /// </summary>
-        /// <param name="finchRobot">finch robot object</param>
+        /// <param name="Bobert">finch robot object</param>
         /// <returns>notify if the robot is connected</returns>
-        static bool DisplayConnectFinchRobot(Finch finchRobot)
+        static bool DisplayConnectFinchRobot(Finch Bobert)
         {
             Console.CursorVisible = false;
 
@@ -249,8 +446,22 @@ namespace Project_FinchControl
             Console.WriteLine("\tAbout to connect to Finch robot. Please be sure the USB cable is connected to the robot and computer now.");
             DisplayContinuePrompt();
 
-            robotConnected = finchRobot.connect();
+            robotConnected = Bobert.connect();
 
+            while (robotConnected)
+            {
+                Console.WriteLine("\twe found the robot!");
+                Bobert.noteOn(880);
+                Bobert.wait(1000);
+                Bobert.noteOff();
+                DisplayContinuePrompt();
+                break;
+            }
+            if (!(robotConnected))
+            {
+                Console.WriteLine("\tThe robot got lost! try again!");
+                DisplayContinuePrompt();
+            }
             // TODO test connection and provide user feedback - text, lights, sounds
 
             DisplayMenuPrompt("Main Menu");
@@ -258,8 +469,8 @@ namespace Project_FinchControl
             //
             // reset finch robot
             //
-            finchRobot.setLED(0, 0, 0);
-            finchRobot.noteOff();
+            Bobert.setLED(0, 0, 0);
+            Bobert.noteOff();
 
             return robotConnected;
         }
@@ -270,7 +481,7 @@ namespace Project_FinchControl
 
         /// <summary>
         /// *****************************************************************
-        /// *                     Welcome Screen                            *
+        /// *     Method--C--    Welcome Screen                            *
         /// *****************************************************************
         /// </summary>
         static void DisplayWelcomeScreen()
@@ -281,13 +492,15 @@ namespace Project_FinchControl
             Console.WriteLine();
             Console.WriteLine("\t\tFinch Control");
             Console.WriteLine();
+            Console.WriteLine("\tWelcome to the finch robot or whatever. we will do stuff.");
+            Console.WriteLine();
 
             DisplayContinuePrompt();
         }
 
         /// <summary>
         /// *****************************************************************
-        /// *                     Closing Screen                            *
+        /// *        Method--D-- Closing Screen                            *
         /// *****************************************************************
         /// </summary>
         static void DisplayClosingScreen()
@@ -303,7 +516,7 @@ namespace Project_FinchControl
         }
 
         /// <summary>
-        /// display continue prompt
+        /// display continue prompt Method--A--
         /// </summary>
         static void DisplayContinuePrompt()
         {
@@ -323,7 +536,7 @@ namespace Project_FinchControl
         }
 
         /// <summary>
-        /// display screen header
+        /// display screen header Method--B--
         /// </summary>
         static void DisplayScreenHeader(string headerText)
         {
