@@ -319,19 +319,39 @@ namespace Project_FinchControl
             // code code code
             // ramp noise up to creshendo, then back down,
             // do a circle
-            Bobert.noteOn(600);
+            
+            //Fix Song, then hit push in the upper right hand corner to finish
+            Bobert.noteOn(1244);
             Bobert.wait(250);
             Bobert.noteOff();
-            Bobert.noteOn(600);
+            Bobert.noteOn(1244);
             Bobert.wait(250);
             Bobert.noteOff();
-            Bobert.noteOn(550);
+            Bobert.noteOn(1108);
             Bobert.wait(250);
             Bobert.noteOff();
-            Bobert.noteOn(600);
+            Bobert.noteOn(1244);
+            Bobert.wait(250);
+            Bobert.noteOff();
+            Bobert.noteOn(932);
+            Bobert.wait(250);
+            Bobert.noteOff();
+            Bobert.wait(250);
+            Bobert.noteOn(932);
             Bobert.wait(500);
             Bobert.noteOff();
-
+            Bobert.noteOn(1244);
+            Bobert.wait(500);
+            Bobert.noteOff();
+            Bobert.noteOn(1661);
+            Bobert.wait(500);
+            Bobert.noteOff();
+            Bobert.noteOn(1568);
+            Bobert.wait(500);
+            Bobert.noteOff();
+            Bobert.noteOn(1244);
+            Bobert.wait(500);
+            Bobert.noteOff();
             bool validResponse;
             string userResponse;
             int frequency;
@@ -354,16 +374,34 @@ namespace Project_FinchControl
             Bobert.wait(500);
             Bobert.noteOff();
 
-            Console.WriteLine("Was that your note?");
+            Console.WriteLine("\tWas that your note?");
             DisplayContinuePrompt();
 
+            do
+            {
+                validResponse = true;
 
+                Console.Write($"\tyes or no?");
+                userResponse = Console.ReadLine();
 
+                if ((userResponse != "yes")&&(userResponse != "no"))
+                {
+                    Console.WriteLine("\t its a yes or no dummy!");
+                    validResponse = false;
+                }
 
+            } while (!validResponse);
 
+            if (userResponse == "yes")
+            {
+                Console.WriteLine("\thuzzah!");               
+            }
 
-
-            //ask user for flashes and give back, double check with velis about all components
+            if (userResponse == "no")
+            {
+                Console.WriteLine("\tSince that's the note you gave me, im moving on anyway!");
+            }          
+            
             DisplayContinuePrompt();
         }
 
