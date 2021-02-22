@@ -196,16 +196,16 @@ namespace Project_FinchControl
             Console.WriteLine("\tThe Finch robot will now show off its glowing talent!");
             DisplayContinuePrompt();
 
-            //for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
-            //{
-            //    Bobert.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
-            //    Bobert.noteOn(lightSoundLevel * 100);
-            //}
+            for (int lightSoundLevel = 0; lightSoundLevel < 255; lightSoundLevel++)
+            {
+                Bobert.setLED(lightSoundLevel, lightSoundLevel, lightSoundLevel);
+                Bobert.noteOn(lightSoundLevel * 100);
+            }
 
             //
             //led flash
             //
-           
+
             Bobert.setLED(255, 0, 0);
             Bobert.wait(2000);
             Bobert.setLED(0, 255, 0);
@@ -238,7 +238,9 @@ namespace Project_FinchControl
             DisplayContinuePrompt();
             Bobert.setLED(0, 0, 0);
 
-
+            Bobert.noteOn(9001);
+            Bobert.wait(100);
+            Bobert.noteOff();
             DisplayContinuePrompt();
             DisplayMenuPrompt("\tTalent Show Menu");
         }
