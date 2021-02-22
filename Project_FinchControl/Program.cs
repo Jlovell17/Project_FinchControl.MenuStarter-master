@@ -322,17 +322,28 @@ namespace Project_FinchControl
             
             //Fix Song, then hit push in the upper right hand corner to finish
             Bobert.noteOn(1244);
+            Bobert.setMotors(200, 200);
             Bobert.wait(250);
             Bobert.noteOff();
+            Bobert.setMotors(0, 0);
+
+            
             Bobert.noteOn(1244);
+            Bobert.setMotors(-200, -200);
             Bobert.wait(250);
+            Bobert.setMotors(0, 0);
             Bobert.noteOff();
+
             Bobert.noteOn(1108);
+            Bobert.setLED(100,00,00);
             Bobert.wait(250);
             Bobert.noteOff();
+            Bobert.setLED(0,0,0);
             Bobert.noteOn(1244);
+            Bobert.setLED(0, 200, 0);
             Bobert.wait(250);
             Bobert.noteOff();
+            Bobert.setLED(0, 0, 0);
             Bobert.noteOn(932);
             Bobert.wait(250);
             Bobert.noteOff();
