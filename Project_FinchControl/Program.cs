@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using FinchAPI;
+using System.Linq;
 
 namespace Project_FinchControl
 {
@@ -427,13 +428,327 @@ namespace Project_FinchControl
         /// *****************************************************************
         /// </summary>
         static void DataRecorderDisplayMenuScreen(Finch Bobert)
+        
+            
+            {
+                Console.CursorVisible = true;
+            int numberOfDataPoints = 0;
+            double dataPointFrequency = 0;
+            double[] temperatures = null;
+            double[] Lights = null;
+                bool quitDataRecorderMenu = false;
+                string menuChoice;
+
+                do
+                {
+                    DisplayScreenHeader("\tData recorder Menu");
+                    
+                    DisplayContinuePrompt();
+                    //
+                    // get user menu choice
+                    //
+                    Console.WriteLine("\ta) Number of data Points");
+                    Console.WriteLine("\tb) Frequency of data points");
+                    Console.WriteLine("\tc) Get Temp Data");
+                    Console.WriteLine("\td) Show Temp Data");
+                    Console.WriteLine("\te) Get Light Data");
+                    Console.WriteLine("\tf) Show Light Data");
+                    Console.WriteLine("\tq) Main Menu");
+                    Console.Write("\t\tEnter Choice:");
+                    menuChoice = Console.ReadLine().ToLower();
+
+                    //
+                    // process user menu choice
+                    //
+                    switch (menuChoice)
+                    {
+                        case "a":
+                        numberOfDataPoints = DataRecorderDisplayGetNumberOfDataPoints();
+                            break;
+
+                        case "b":
+                        dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
+                            break;
+
+                        case "c": 
+                        temperatures = DataRecorderDisplayGetTempData(numberOfDataPoints, dataPointFrequency, Bobert);
+                            break;
+
+                        case "d":
+                        DataRecorderDisplayTempData(temperatures);
+                            break;
+                    
+                        case "e":                            
+                        Lights = DataRecorderDisplayGetLight(numberOfDataPoints, dataPointFrequency, Bobert);
+                            break;
+
+                        case "f":
+                        DataRecorderDisplayLightData(Lights);
+                            break;
+
+                         case "q":
+                            quitDataRecorderMenu = true;
+                            break;
+
+                        default:
+                            Console.WriteLine();
+                            Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                            DisplayContinuePrompt();
+                            break;
+                    }
+
+                } while (!quitDataRecorderMenu);
+            }
+
+
+
+        static void DataRecorderDisplayDataTable(double[] temperatures)
         {
-            DisplayScreenHeader("\tData recorder");
-            Console.WriteLine();
-            Console.WriteLine("\tModule is under development");
-            Console.WriteLine();
-            DisplayContinuePrompt();
+            Console.WriteLine(
+                    "reading #".PadLeft(20) +
+                    "Temperature".PadLeft(15)
+                    );
+
+            Console.WriteLine(
+                "---------".PadLeft(20) +
+                "-----------".PadLeft(15)
+
+                );
+
+            for (int index = 0; index < temperatures.Length; index++)
+            {
+                Console.WriteLine(
+                    (index + 1).ToString().PadLeft(20) +
+                   (temperatures[index]).ToString("n1").PadLeft(15)
+                    );
+            }
+
         }
+        static void DataRecorderDisplayLightDataTable(double[] Lights)
+        {
+            Console.WriteLine(
+                    "reading #".PadLeft(20) +
+                    "Level".PadLeft(15)
+                    );
+
+            Console.WriteLine(
+                "---------".PadLeft(20) +
+                "-----------".PadLeft(15)
+
+                );
+
+            for (int index = 0; index < Lights.Length; index++)
+            {
+                Console.WriteLine(
+                    (index + 1).ToString().PadLeft(20) +
+                   (Lights[index]).ToString("n1").PadLeft(15)
+                    );
+            }
+
+        }
+
+        static int ValidateInteger(string prompt, int minimum, int maximum)
+        {
+            bool validResponse;
+            int numberEntered;
+
+            do
+            {
+                validResponse = true;
+
+                Console.Write($"\t{prompt} ");
+
+                if (!int.TryParse(Console.ReadLine(), out numberEntered))
+                {
+                    Console.WriteLine("\tPlease enter a valid number");
+                    DisplayContinuePrompt();
+                    validResponse = false;
+                }
+                else if (numberEntered < minimum || numberEntered > maximum)
+                {
+                    Console.WriteLine($"\tPlease enter a number between {minimum} and {maximum}");
+                    DisplayContinuePrompt();
+                    validResponse = false;
+                }
+
+            } while (!validResponse);
+
+            return numberEntered;
+        }
+
+            static void DataRecorderDisplayTempData(double[] temperatures)
+        {
+            DisplayScreenHeader("ORIGINAL Temperatures");
+            DataRecorderDisplayDataTable(temperatures);
+
+            Console.WriteLine("\tsorted temperatures from lowest to highest");
+            Array.Sort(temperatures);
+
+            Console.WriteLine();
+
+            Console.WriteLine("\tThe temp values listed in order are:");
+            foreach (double index in temperatures)
+            {
+                Console.Write("\t "+index.ToString("n2")+" ");
+            }
+            Console.WriteLine();
+            Console.WriteLine($"cumulative recorded temperatures:b {temperatures.Sum().ToString("n2")} ");
+            Console.WriteLine();
+            Console.WriteLine($" average temperature was {temperatures.Average().ToString("n2")}");
+
+            DisplayContinuePrompt();
+
+        }
+
+        static void DataRecorderDisplayLightData(double[] Lights)
+        {
+            DisplayScreenHeader("Light levels");
+            DataRecorderDisplayLightDataTable(Lights);
+            Console.WriteLine();
+            Console.WriteLine("\tsorted light levels from lowest to highest");
+            Array.Sort(Lights);
+
+            Console.WriteLine();
+
+            Console.WriteLine("\tThe light values listed in order are:");
+            foreach (double index in Lights)
+            {
+                Console.Write("\t " + index.ToString("n2") + " ");
+            }
+            Console.WriteLine();
+            Console.WriteLine($"cumulative recorded Light:b {Lights.Sum().ToString("n2")} ");
+            Console.WriteLine();
+            Console.WriteLine($" average Light was {Lights.Average().ToString("n2")}");
+
+            DisplayContinuePrompt();
+
+        }
+
+        static double[] DataRecorderDisplayGetLight(int numberOfDataPoints, double dataPointFrequency, Finch bobert)
+        {
+            double[] Lights = new double[numberOfDataPoints];
+          
+            int datapointfrequncsMS;
+            // convert sec to MS
+
+            datapointfrequncsMS = (int)(dataPointFrequency * 1000);
+            DisplayScreenHeader("Light levels");
+
+            //echo values 
+            Console.WriteLine($"\t the finch robot will now record {numberOfDataPoints}Lights {dataPointFrequency} seconds apart.");
+            Console.WriteLine("press any key to begin");
+            Console.ReadKey();
+
+            for (int index = 0; index < numberOfDataPoints; index++)
+            {
+                Lights[index] = bobert.getLeftLightSensor();
+                
+                Console.WriteLine($"\t Lights {index + 1}: {Lights[index]:n1}");
+                bobert.wait(datapointfrequncsMS);
+                                
+            }
+
+            //
+            //
+            //display table of light 
+            DataRecorderDisplayLightDataTable(Lights);
+
+            DisplayMenuPrompt("Data Recorder Menu");
+
+            return Lights;
+        }
+
+        /// <summary>
+        /// get temperatures from robot
+        /// </summary>
+        /// <param name="numberOfDataPoints">number of data points</param>
+        /// <param name="dataPointFrequency">data point frequnecy</param>
+        /// <param name="bobert">finch robot object</param>
+        /// <returns>Temperatures</returns>
+        static double[] DataRecorderDisplayGetTempData(int numberOfDataPoints, double dataPointFrequency, Finch bobert)
+        {
+            double[] temperatures = new double[numberOfDataPoints];
+            int[] conversion = new int[numberOfDataPoints];
+            int datapointfrequncsMS;
+            // convert sec to MS
+
+            datapointfrequncsMS = (int)(dataPointFrequency * 1000);
+            DisplayScreenHeader("temperatures");
+
+            //echo values 
+            Console.WriteLine($"\t the finch robot will now record {numberOfDataPoints} temperatures, {dataPointFrequency} seconds apart.");
+            Console.WriteLine("\tpress any key to begin");
+            Console.ReadKey();
+
+            for (int index = 0; index < numberOfDataPoints; index++)
+            {
+              temperatures[index] = bobert.getTemperature();
+                
+
+                // echo new temp // F and Celcius**************************
+
+                Console.WriteLine($"\t temperature {index +1}: {temperatures[index]:n1}");
+                bobert.wait(datapointfrequncsMS);
+                conversion[index] = ConvertCelciusToFarenheit(temperatures[index]);
+                Console.WriteLine($"\t {conversion[index]:n1} degrees farenheit");
+            }
+            
+            //
+            //
+            //display table of temp 
+            DataRecorderDisplayDataTable(temperatures);
+            
+            DisplayMenuPrompt("Data Recorder Menu");
+            
+            return temperatures;
+        }
+
+        static int ConvertCelciusToFarenheit(double temperatures)
+        {                                 
+            return (int)(temperatures * 1.8 + 32);
+        }
+
+        /// <summary>
+        /// get frequncy of data points
+        /// </summary>
+        /// <returns>frequency of data points</returns>
+        static double DataRecorderDisplayGetDataPointFrequency()
+        {
+            double dataPointFrequency;
+            
+            DisplayScreenHeader("Data Point Frequency");
+            Console.WriteLine();
+
+            dataPointFrequency = ValidateInteger("please enter desired frequency of data capture:",0,60);           
+            Console.WriteLine();
+            Console.WriteLine($"\t you chose {dataPointFrequency} seconds as the frequency of data points.");
+            DisplayMenuPrompt("DataRecoder");
+
+            return dataPointFrequency;
+        }
+
+        /// <summary>
+        /// get number of data points
+        /// </summary>
+        /// <returns>number of data points</returns>
+        static int DataRecorderDisplayGetNumberOfDataPoints()
+        {
+            int numberOfDataPoints;
+
+            DisplayScreenHeader("Number of Data Points");
+            Console.Write("\tEnter the desired number of data points:");
+            Console.WriteLine();
+
+            numberOfDataPoints = ValidateInteger("\t Desired Number of data points:",0,20);
+            //Vaalidate the number
+
+            Console.WriteLine();
+            Console.WriteLine($"\t you chose {numberOfDataPoints} as the number of data points.");
+            DisplayMenuPrompt("DataRecoder");
+
+            return numberOfDataPoints;
+        }
+
         #endregion
 
         #region ALARM SYSTEM
@@ -514,6 +829,8 @@ namespace Project_FinchControl
                 DisplayContinuePrompt();
             }
             // TODO test connection and provide user feedback - text, lights, sounds
+
+            //validfate connection, play light and sound, or say no connection;
 
             DisplayMenuPrompt("Main Menu");
 
