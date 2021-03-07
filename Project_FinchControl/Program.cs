@@ -230,7 +230,7 @@ namespace Project_FinchControl
                 Bobert.wait(200);
             }
 
-            for (int x = 0; x < 255; x=x+15)
+            for (int x = 0; x < 255; x = x + 15)
             {
                 Bobert.setLED(x, 0, x);
                 Bobert.wait(100);
@@ -255,25 +255,25 @@ namespace Project_FinchControl
         {
             DisplayScreenHeader("\tDance!");
 
-           Console.WriteLine("Bobert will now go through his paces!");
+            Console.WriteLine("Bobert will now go through his paces!");
             DisplayContinuePrompt();
-           
+
             Console.WriteLine("\tPut your left wheel in!");
-           Bobert.setMotors(250, 0);
-           Bobert.wait(750);
+            Bobert.setMotors(250, 0);
+            Bobert.wait(750);
             Bobert.setMotors(0, 0);
 
             DisplayContinuePrompt();
 
             Console.WriteLine("\tTake your left wheel out!");
-           Bobert.setMotors(-250, 0);
+            Bobert.setMotors(-250, 0);
             Bobert.wait(750);
             Bobert.setMotors(0, 0);
 
             DisplayContinuePrompt();
 
             Console.WriteLine("\tPut both wheels in and shake it all about!");
-            Bobert.setMotors(250,250);
+            Bobert.setMotors(250, 250);
             Bobert.wait(1000);
             Bobert.setMotors(-250, 250);
             Bobert.wait(500);
@@ -322,7 +322,7 @@ namespace Project_FinchControl
             // code code code
             // ramp noise up to creshendo, then back down,
             // do a circle
-            
+
             //Fix Song, then hit push in the upper right hand corner to finish
             Bobert.noteOn(1244);
             Bobert.setMotors(200, 200);
@@ -330,7 +330,7 @@ namespace Project_FinchControl
             Bobert.noteOff();
             Bobert.setMotors(0, 0);
 
-            
+
             Bobert.noteOn(1244);
             Bobert.setMotors(-200, -200);
             Bobert.wait(250);
@@ -338,10 +338,10 @@ namespace Project_FinchControl
             Bobert.noteOff();
 
             Bobert.noteOn(1108);
-            Bobert.setLED(100,00,00);
+            Bobert.setLED(100, 00, 00);
             Bobert.wait(250);
             Bobert.noteOff();
-            Bobert.setLED(0,0,0);
+            Bobert.setLED(0, 0, 0);
             Bobert.noteOn(1244);
             Bobert.setLED(0, 200, 0);
             Bobert.wait(250);
@@ -398,7 +398,7 @@ namespace Project_FinchControl
                 Console.Write($"\tyes or no?");
                 userResponse = Console.ReadLine();
 
-                if ((userResponse != "yes")&&(userResponse != "no"))
+                if ((userResponse != "yes") && (userResponse != "no"))
                 {
                     Console.WriteLine("\t its a yes or no dummy!");
                     validResponse = false;
@@ -408,14 +408,14 @@ namespace Project_FinchControl
 
             if (userResponse == "yes")
             {
-                Console.WriteLine("\thuzzah!");               
+                Console.WriteLine("\thuzzah!");
             }
 
             if (userResponse == "no")
             {
                 Console.WriteLine("\tSince that's the note you gave me, im moving on anyway!");
-            }          
-            
+            }
+
             DisplayContinuePrompt();
         }
 
@@ -428,77 +428,77 @@ namespace Project_FinchControl
         /// *****************************************************************
         /// </summary>
         static void DataRecorderDisplayMenuScreen(Finch Bobert)
-        
-            
-            {
-                Console.CursorVisible = true;
+
+
+        {
+            Console.CursorVisible = true;
             int numberOfDataPoints = 0;
             double dataPointFrequency = 0;
             double[] temperatures = null;
             double[] Lights = null;
-                bool quitDataRecorderMenu = false;
-                string menuChoice;
+            bool quitDataRecorderMenu = false;
+            string menuChoice;
 
-                do
+            do
+            {
+                DisplayScreenHeader("\tData recorder Menu");
+
+                DisplayContinuePrompt();
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Number of data Points");
+                Console.WriteLine("\tb) Frequency of data points");
+                Console.WriteLine("\tc) Get Temp Data");
+                Console.WriteLine("\td) Show Temp Data");
+                Console.WriteLine("\te) Get Light Data");
+                Console.WriteLine("\tf) Show Light Data");
+                Console.WriteLine("\tq) Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
                 {
-                    DisplayScreenHeader("\tData recorder Menu");
-                    
-                    DisplayContinuePrompt();
-                    //
-                    // get user menu choice
-                    //
-                    Console.WriteLine("\ta) Number of data Points");
-                    Console.WriteLine("\tb) Frequency of data points");
-                    Console.WriteLine("\tc) Get Temp Data");
-                    Console.WriteLine("\td) Show Temp Data");
-                    Console.WriteLine("\te) Get Light Data");
-                    Console.WriteLine("\tf) Show Light Data");
-                    Console.WriteLine("\tq) Main Menu");
-                    Console.Write("\t\tEnter Choice:");
-                    menuChoice = Console.ReadLine().ToLower();
-
-                    //
-                    // process user menu choice
-                    //
-                    switch (menuChoice)
-                    {
-                        case "a":
+                    case "a":
                         numberOfDataPoints = DataRecorderDisplayGetNumberOfDataPoints();
-                            break;
+                        break;
 
-                        case "b":
+                    case "b":
                         dataPointFrequency = DataRecorderDisplayGetDataPointFrequency();
-                            break;
+                        break;
 
-                        case "c": 
+                    case "c":
                         temperatures = DataRecorderDisplayGetTempData(numberOfDataPoints, dataPointFrequency, Bobert);
-                            break;
+                        break;
 
-                        case "d":
+                    case "d":
                         DataRecorderDisplayTempData(temperatures);
-                            break;
-                    
-                        case "e":                            
+                        break;
+
+                    case "e":
                         Lights = DataRecorderDisplayGetLight(numberOfDataPoints, dataPointFrequency, Bobert);
-                            break;
+                        break;
 
-                        case "f":
+                    case "f":
                         DataRecorderDisplayLightData(Lights);
-                            break;
+                        break;
 
-                         case "q":
-                            quitDataRecorderMenu = true;
-                            break;
+                    case "q":
+                        quitDataRecorderMenu = true;
+                        break;
 
-                        default:
-                            Console.WriteLine();
-                            Console.WriteLine("\tPlease enter a letter for the menu choice.");
-                            DisplayContinuePrompt();
-                            break;
-                    }
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
 
-                } while (!quitDataRecorderMenu);
-            }
+            } while (!quitDataRecorderMenu);
+        }
 
 
 
@@ -547,6 +547,8 @@ namespace Project_FinchControl
 
         }
 
+
+
         static int ValidateInteger(string prompt, int minimum, int maximum)
         {
             bool validResponse;
@@ -576,7 +578,7 @@ namespace Project_FinchControl
             return numberEntered;
         }
 
-            static void DataRecorderDisplayTempData(double[] temperatures)
+        static void DataRecorderDisplayTempData(double[] temperatures)
         {
             DisplayScreenHeader("ORIGINAL Temperatures");
             DataRecorderDisplayDataTable(temperatures);
@@ -589,7 +591,7 @@ namespace Project_FinchControl
             Console.WriteLine("\tThe temp values listed in order are:");
             foreach (double index in temperatures)
             {
-                Console.Write("\t "+index.ToString("n2")+" ");
+                Console.Write("\t " + index.ToString("n2") + " ");
             }
             Console.WriteLine();
             Console.WriteLine($"cumulative recorded temperatures:b {temperatures.Sum().ToString("n2")} ");
@@ -627,7 +629,7 @@ namespace Project_FinchControl
         static double[] DataRecorderDisplayGetLight(int numberOfDataPoints, double dataPointFrequency, Finch bobert)
         {
             double[] Lights = new double[numberOfDataPoints];
-          
+
             int datapointfrequncsMS;
             // convert sec to MS
 
@@ -642,10 +644,10 @@ namespace Project_FinchControl
             for (int index = 0; index < numberOfDataPoints; index++)
             {
                 Lights[index] = bobert.getLeftLightSensor();
-                
+
                 Console.WriteLine($"\t Lights {index + 1}: {Lights[index]:n1}");
                 bobert.wait(datapointfrequncsMS);
-                                
+
             }
 
             //
@@ -682,29 +684,29 @@ namespace Project_FinchControl
 
             for (int index = 0; index < numberOfDataPoints; index++)
             {
-              temperatures[index] = bobert.getTemperature();
-                
+                temperatures[index] = bobert.getTemperature();
+
 
                 // echo new temp // F and Celcius**************************
 
-                Console.WriteLine($"\t temperature {index +1}: {temperatures[index]:n1}");
+                Console.WriteLine($"\t temperature {index + 1}: {temperatures[index]:n1}");
                 bobert.wait(datapointfrequncsMS);
                 conversion[index] = ConvertCelciusToFarenheit(temperatures[index]);
                 Console.WriteLine($"\t {conversion[index]:n1} degrees farenheit");
             }
-            
+
             //
             //
             //display table of temp 
             DataRecorderDisplayDataTable(temperatures);
-            
+
             DisplayMenuPrompt("Data Recorder Menu");
-            
+
             return temperatures;
         }
 
         static int ConvertCelciusToFarenheit(double temperatures)
-        {                                 
+        {
             return (int)(temperatures * 1.8 + 32);
         }
 
@@ -715,11 +717,11 @@ namespace Project_FinchControl
         static double DataRecorderDisplayGetDataPointFrequency()
         {
             double dataPointFrequency;
-            
+
             DisplayScreenHeader("Data Point Frequency");
             Console.WriteLine();
 
-            dataPointFrequency = ValidateInteger("please enter desired frequency of data capture:",0,60);           
+            dataPointFrequency = ValidateInteger("please enter desired frequency of data capture:", 0, 60);
             Console.WriteLine();
             Console.WriteLine($"\t you chose {dataPointFrequency} seconds as the frequency of data points.");
             DisplayMenuPrompt("DataRecoder");
@@ -739,7 +741,7 @@ namespace Project_FinchControl
             Console.Write("\tEnter the desired number of data points:");
             Console.WriteLine();
 
-            numberOfDataPoints = ValidateInteger("\t Desired Number of data points:",0,20);
+            numberOfDataPoints = ValidateInteger("\t Desired Number of data points:", 0, 20);
             //Vaalidate the number
 
             Console.WriteLine();
@@ -761,12 +763,376 @@ namespace Project_FinchControl
         static void AlarmSystemDisplayMenuScreen(Finch Bobert)
         {
             DisplayScreenHeader("Alarm System");
-            Console.WriteLine();
-            Console.WriteLine("\tModule is under development");
-            Console.WriteLine();
-            DisplayContinuePrompt();
+
+
+            Console.CursorVisible = true;
+
+            bool quitAlarmMenu = false;
+            string menuChoice;
+
+            string SensorsToMonitor = "";
+            string rangetype = "";
+            int minMaxThresholdValue = 0;
+            int timeToMonitor = 0;
+
+
+
+            do
+            {
+                DisplayScreenHeader("Alarm Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Set Sensors to Monitor");
+                Console.WriteLine("\tb) Set range type");
+                Console.WriteLine("\tc) Set min/max threshold value");
+                Console.WriteLine("\td) Set time to monitor ");
+                Console.WriteLine("\te) Set Alarm");
+                Console.WriteLine("\tf) ");
+                Console.WriteLine("\tq) Quit alarm menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // validate user choice
+                //
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
+                {
+                    case "a":
+                        SensorsToMonitor = AlarmSystemDisplaySetSensors();
+                        break;
+
+                    case "b":
+                        rangetype = AlarmSystemDisplaySetRangeType();
+                        break;
+
+                    case "c":
+                        minMaxThresholdValue = AlarmSystemDisplayThresholdValue(SensorsToMonitor, Bobert);
+                        break;
+
+                    case "d":
+                        timeToMonitor = AlarmSystemDisplayTimeToMonitor();
+                        break;
+
+                    case "e":
+                        AlarmSystemDisplaySetAlarm(Bobert, SensorsToMonitor, rangetype, minMaxThresholdValue, timeToMonitor);
+                        break;
+
+                    case "f":
+
+                        break;
+
+                    case "q":
+                        quitAlarmMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitAlarmMenu);
+        }
+
+        static void AlarmSystemDisplaySetAlarm(
+            Finch bobert,
+            string sensorsToMonitor,
+            string rangetype,
+            int minMaxThresholdValue,
+            int timeToMonitor
+            )
+
+        {
+
+
+
+            int secondsElapsed = 1;
+            bool thresholdExceded = false;
+            int leftLightSensortValue;
+            int rightLightSensorValue;
+
+            DisplayScreenHeader("Set Alarm");
+            //echo values to user
+
+            Console.WriteLine("\tStart");
+
+            //Prompt user to start
+            Console.ReadKey();
+            //got lost with half an hour to go
+
+            do
+            {
+                //
+                //get  current light lvl
+                //
+
+                leftLightSensortValue = bobert.getLeftLightSensor();
+                rightLightSensorValue = bobert.getRightLightSensor();
+
+                switch (sensorsToMonitor)
+                {
+                    case "left":
+                        Console.WriteLine($"\tcurrent left light value: {leftLightSensortValue}");
+                        break;
+
+                    case "right":
+                        Console.WriteLine($"\tcurrent right light value: {rightLightSensorValue}");
+                        break;
+
+                    case "both":
+                        Console.WriteLine($"\tcurrent left light value: {leftLightSensortValue}");
+                        Console.WriteLine($"\tcurrent right light value: {rightLightSensorValue}");
+                        break;
+
+                    default:
+                        Console.WriteLine("\tUnkown Sensor Reference");
+                        break;
+                }
+                //wait 1
+                bobert.wait(1000);
+                secondsElapsed++;
+
+                //test for threshold exceeded
+                switch (sensorsToMonitor)
+                {
+                    case "left":
+                        if (rangetype == "minimum")
+                        {
+                            thresholdExceded = (leftLightSensortValue < minMaxThresholdValue);
+                        }
+                        else //max
+                        {
+                            thresholdExceded = (leftLightSensortValue > minMaxThresholdValue);
+                        }
+                        break;
+
+                    case "right":
+                        if (rangetype == "minimum")
+                        {
+                            if (rightLightSensorValue < minMaxThresholdValue)
+                            {
+                                thresholdExceded = true;
+                            }
+
+                        }
+                        else //max
+                        {
+                            if (rightLightSensorValue > minMaxThresholdValue)
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+                        break;
+
+                    case "both":
+                        if (rangetype == "minimum")
+                        {
+                            if ((leftLightSensortValue < minMaxThresholdValue) || (rightLightSensorValue < minMaxThresholdValue))
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+                        else //max
+                        {
+                            if ((leftLightSensortValue > minMaxThresholdValue) || (rightLightSensorValue > minMaxThresholdValue))
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine("\tUnkown Sensor Reference");
+                        break;
+                }
+
+            } while (!thresholdExceded && (secondsElapsed <= timeToMonitor));
+
+            if (thresholdExceded)
+            {
+                Console.WriteLine("exceeded");
+            }
+
+            else
+            {
+                Console.WriteLine("threshold not exceeded, time expired");
+            }
+
+
+
+            DisplayMenuPrompt("Alarm System");
 
         }
+
+        //static void AlarmSystemDisplaySetAlarmLeft(
+        //    Finch bobert,
+        //    string sensorsToMonitor,
+        //    string rangetype,
+        //    int minMaxThresholdValue,
+        //    int timeToMonitor
+        //    )
+        //{
+        //    double thresholdValue;
+        //    rangetype = "Minimum";
+        //    timeToMonitor = 5;
+        //    minMaxThresholdValue = 15;
+        //    int secondsElapsed=0;
+        //    bool thresholdExceded = false;
+        //    double currentTemperature;
+        //    do
+        //    {
+        //        //get and display current temp
+        //        currentTemperature = bobert.getTemperature();
+        //        Console.WriteLine($"current temp {currentTemperature} sec: {currentTemperature}");
+
+        //        bobert.wait(1000);
+        //        secondsElapsed++;
+        //        if (currentTemperature < minMaxThresholdValue)
+        //        {
+        //            thresholdExceded = true;
+        //        }
+
+        //        Console.WriteLine("stil monitoring temp");
+
+        //    } while (!thresholdExceded&& (secondsElapsed<= timeToMonitor));
+
+        //    if (thresholdExceded)
+        //    {
+        //        Console.WriteLine("exceeded");
+        //    }
+
+        //    else
+        //    {
+        //        Console.WriteLine("Not exceeded, time limit met");
+        //    }
+
+
+
+        //}
+
+        //static void AlarmSystemDisplaySetAlarmRight(
+        //    Finch bobert,
+        //    string sensorsToMonitor,
+        //    string rangetype,
+        //    int minMaxThresholdValue,
+        //    int timeToMonitor
+        //    )
+        //{
+
+
+
+        //}
+
+        // static void AlarmSystemDisplaySetAlarmBoth(
+        //    Finch bobert,
+        //    string sensorsToMonitor,
+        //    string rangetype,
+        //    int minMaxThresholdValue,
+        //    int timeToMonitor
+        //    )
+        //{
+
+
+
+
+        // }
+
+        static int AlarmSystemDisplayTimeToMonitor()
+        {
+            int timeToMonitor = 0;
+
+            DisplayScreenHeader("Time To Monitor");
+
+            Console.Write("\tEnter Time To Monitor");
+            //validate and echo
+            timeToMonitor = ValidateInteger("\tEnter Time To Monitor", 1, 60);
+
+            Console.WriteLine($"\tTime to monitor {timeToMonitor} seconds. ");
+
+            DisplayMenuPrompt("Alarm System");
+            return timeToMonitor;
+        }
+
+        static int AlarmSystemDisplayThresholdValue(string sensorsToMonitor, Finch Bobert)
+        {
+            int thresholdValue = 0;
+            int currentLeftSensorValue = Bobert.getLeftLightSensor();
+            int currentRightSensorValue = Bobert.getRightLightSensor();
+
+            DisplayScreenHeader("Threshold Value");
+            //display ambient, 1 hour 5 minutes or so into lecture
+
+            switch (sensorsToMonitor.ToLower())
+            {
+                case "left":
+                    Console.WriteLine($"\tCurrent {sensorsToMonitor} sensor value: {currentLeftSensorValue} ");
+                    break;
+
+                case "right":
+                    Console.WriteLine($"\tCurrent {sensorsToMonitor} sensor value: {currentRightSensorValue} ");
+                    break;
+
+                case "both":
+                    Console.WriteLine($"\tCurrent left sensor value: {currentLeftSensorValue} ");
+                    Console.WriteLine($"\tCurrent right sensor value: {currentRightSensorValue} ");
+                    break;
+
+                default:
+                    Console.WriteLine("\tUnkown Sensor Reference");
+                    break;
+            }
+
+            // collect user inpout and validate
+            thresholdValue = ValidateInteger("\tEnter Threshold value", 0, 255);
+
+            //echo
+            Console.WriteLine($"\tUser defined threshold: {thresholdValue}" );
+            DisplayMenuPrompt("Alarm System");
+            return thresholdValue;
+        }
+
+        static string AlarmSystemDisplaySetRangeType()
+        {
+            string rangeType = "";            
+            DisplayScreenHeader("Range Type");
+            
+            //validate
+            DisplayScreenHeader("Set range type");
+
+            rangeType = validateStringInput("\tSet the range type[minimum, maximum]", "minimum or maximum please",
+                new string[] { "minimum", "maximum" });
+
+            Console.WriteLine($"You have chosen:{rangeType}");
+            DisplayMenuPrompt("Alarm system");
+            
+            return rangeType;
+        }
+
+        static string AlarmSystemDisplaySetSensors()
+        {
+            string sensorsToMonitor = "";
+            //validate
+            DisplayScreenHeader("Sensors To Monitor");
+
+            sensorsToMonitor = validateStringInput("\tEnter sensors to Monitor[left, right, both]", "left, right, or both please",
+                new string[] {"left", "right", "both" } );
+
+            Console.WriteLine($"You have chosen:{sensorsToMonitor}");
+            DisplayMenuPrompt("Alarm system");
+
+            return sensorsToMonitor;
+        }
+
+
+
+
 
         #endregion
 
@@ -914,6 +1280,42 @@ namespace Project_FinchControl
             Console.WriteLine();
         }
 
+
+        static string validateStringInput(string prompt, string error, string[] validInputs)
+        {
+            bool validInput = false;
+            string userinput = "";
+            int index = 0;
+
+            while (!validInput)
+            {
+                //display prompt
+                Console.Clear();
+                Console.Write(prompt);
+                userinput = Console.ReadLine();
+
+                //check if input is valid
+                for (index = 0; index < validInputs.Length; index++)
+                {
+                    if (validInputs[index].ToLower() == userinput.ToLower())
+                    {
+                        validInput = true;
+                        break;
+                    }
+                }
+                //if a valid input is not found display an error message
+                if (!validInput)
+                {
+                    Console.WriteLine("\n{0}", error);
+                    Console.WriteLine("press any key to continue");
+                    Console.ReadKey();
+                }
+            }
+            return validInputs[index];
+        }
+
+
         #endregion
     }
+
 }
