@@ -757,26 +757,29 @@ namespace Project_FinchControl
 
         /// <summary>
         /// *****************************************************************
-        /// Mehtod--I--, ALARM SYSTEM under dev
+        /// Mehtod--I--, ALARM SYSTEM under dev alarm:a
         /// *****************************************************************
         /// </summary>
         static void AlarmSystemDisplayMenuScreen(Finch Bobert)
         {
+            //ii
             DisplayScreenHeader("Alarm System");
 
 
             Console.CursorVisible = true;
-
+            
+            //i
             bool quitAlarmMenu = false;
             string menuChoice;
 
             string SensorsToMonitor = "";
             string rangetype = "";
             int minMaxThresholdValue = 0;
+            int tempMinMaxThresholdValue = 0;
             int timeToMonitor = 0;
 
 
-
+            //iii
             do
             {
                 DisplayScreenHeader("Alarm Menu");
@@ -786,17 +789,31 @@ namespace Project_FinchControl
                 //
                 Console.WriteLine("\ta) Set Sensors to Monitor");
                 Console.WriteLine("\tb) Set range type");
-                Console.WriteLine("\tc) Set min/max threshold value");
-                Console.WriteLine("\td) Set time to monitor ");
-                Console.WriteLine("\te) Set Alarm");
-                Console.WriteLine("\tf) ");
+                Console.WriteLine("\tc) Set light min/max threshold value");
+                Console.WriteLine("\td) Set temperature threshold");
+                Console.WriteLine("\te) Set time to monitor ");
+                Console.WriteLine("\tf) Set Alarm");               
                 Console.WriteLine("\tq) Quit alarm menu");
-                Console.Write("\t\tEnter Choice:");
-                menuChoice = Console.ReadLine().ToLower();
 
                 //
                 // validate user choice
                 //
+                Console.WriteLine("\tplease enter menu choice after pressing any key to continue...");
+                Console.ReadKey();
+                menuChoice = validateStringInput("\t\tEnter Choice:" +
+                    "\na) Set Sensors to Monitor," +
+                    "\nb) Set range type," +
+                    "\nc) Set light min/max threshold value, " +
+                    "\nd) Set temperature threshold," +
+                    "\ne) Set time to monitor " +
+                    "\nf) Set Alarm" +
+                    "\nq) Quit alarm menu\t"
+
+
+
+                    , "pick a letter: a, b, c, d, e, f, or q.", 
+                    new string[] { "a", "b", "c", "d", "e", "f", "q" });
+                
 
                 //
                 // process user menu choice
@@ -804,7 +821,7 @@ namespace Project_FinchControl
                 switch (menuChoice)
                 {
                     case "a":
-                        SensorsToMonitor = AlarmSystemDisplaySetSensors();
+                        SensorsToMonitor = AlarmSystemDisplaySetLightSensors();
                         break;
 
                     case "b":
@@ -812,20 +829,20 @@ namespace Project_FinchControl
                         break;
 
                     case "c":
-                        minMaxThresholdValue = AlarmSystemDisplayThresholdValue(SensorsToMonitor, Bobert);
+                        minMaxThresholdValue = AlarmSystemDisplayLightThresholdValue(SensorsToMonitor, Bobert);                        
                         break;
-
+                    
                     case "d":
+                        tempMinMaxThresholdValue = AlarmSystemDisplayTempThresholdValue(SensorsToMonitor, Bobert);
+                      break;
+
+                    case "e":
                         timeToMonitor = AlarmSystemDisplayTimeToMonitor();
                         break;
 
-                    case "e":
-                        AlarmSystemDisplaySetAlarm(Bobert, SensorsToMonitor, rangetype, minMaxThresholdValue, timeToMonitor);
-                        break;
-
                     case "f":
-
-                        break;
+                        AlarmSystemDisplaySetAlarm(Bobert, SensorsToMonitor, rangetype, minMaxThresholdValue, tempMinMaxThresholdValue, timeToMonitor);
+                        break;                   
 
                     case "q":
                         quitAlarmMenu = true;
@@ -846,6 +863,7 @@ namespace Project_FinchControl
             string sensorsToMonitor,
             string rangetype,
             int minMaxThresholdValue,
+            int tempMinMaxThresholdValue,
             int timeToMonitor
             )
 
@@ -857,15 +875,15 @@ namespace Project_FinchControl
             bool thresholdExceded = false;
             int leftLightSensortValue;
             int rightLightSensorValue;
-
+            int currentTemperatureValue;
             DisplayScreenHeader("Set Alarm");
             //echo values to user
 
-            Console.WriteLine("\tStart");
+            Console.WriteLine("\t Press a key to Start");
 
             //Prompt user to start
             Console.ReadKey();
-            //got lost with half an hour to go
+            
 
             do
             {
@@ -875,22 +893,30 @@ namespace Project_FinchControl
 
                 leftLightSensortValue = bobert.getLeftLightSensor();
                 rightLightSensorValue = bobert.getRightLightSensor();
-
+                currentTemperatureValue = (int)bobert.getTemperature();
                 switch (sensorsToMonitor)
                 {
-                    case "left":
+                    case "left light":
                         Console.WriteLine($"\tcurrent left light value: {leftLightSensortValue}");
                         break;
 
-                    case "right":
+                    case "right light":
                         Console.WriteLine($"\tcurrent right light value: {rightLightSensorValue}");
                         break;
 
-                    case "both":
+                    case "both lights":
                         Console.WriteLine($"\tcurrent left light value: {leftLightSensortValue}");
                         Console.WriteLine($"\tcurrent right light value: {rightLightSensorValue}");
                         break;
-
+                    case "temperature":
+                        Console.WriteLine($"\tcurrent temp: {currentTemperatureValue} celcius. ");
+                        break;
+                    
+                    case "all":
+                        Console.WriteLine($"\tcurrent temp: {currentTemperatureValue} celcius. ");
+                        Console.WriteLine($"\tcurrent left light value: {leftLightSensortValue}");
+                        Console.WriteLine($"\tcurrent right light value: {rightLightSensorValue}");
+                        break;
                     default:
                         Console.WriteLine("\tUnkown Sensor Reference");
                         break;
@@ -902,7 +928,7 @@ namespace Project_FinchControl
                 //test for threshold exceeded
                 switch (sensorsToMonitor)
                 {
-                    case "left":
+                    case "left light":
                         if (rangetype == "minimum")
                         {
                             thresholdExceded = (leftLightSensortValue < minMaxThresholdValue);
@@ -913,7 +939,7 @@ namespace Project_FinchControl
                         }
                         break;
 
-                    case "right":
+                    case "right light":
                         if (rangetype == "minimum")
                         {
                             if (rightLightSensorValue < minMaxThresholdValue)
@@ -931,7 +957,7 @@ namespace Project_FinchControl
                         }
                         break;
 
-                    case "both":
+                    case "both lights":
                         if (rangetype == "minimum")
                         {
                             if ((leftLightSensortValue < minMaxThresholdValue) || (rightLightSensorValue < minMaxThresholdValue))
@@ -947,7 +973,42 @@ namespace Project_FinchControl
                             }
                         }
                         break;
+                    case "temperature":
+                        if (rangetype == "minimum")
+                        {
+                            if (currentTemperatureValue < tempMinMaxThresholdValue)
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
 
+                        else //maximum
+                        {
+                            if (currentTemperatureValue > tempMinMaxThresholdValue)
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+                        break;
+
+                    case "all":
+                        if (rangetype == "minimum")
+                        {
+                            if ((currentTemperatureValue < tempMinMaxThresholdValue) || (leftLightSensortValue < minMaxThresholdValue) || (rightLightSensorValue < minMaxThresholdValue))
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+
+                        else //maximum
+                        {
+                            if ((currentTemperatureValue > tempMinMaxThresholdValue) || (leftLightSensortValue > minMaxThresholdValue) || (rightLightSensorValue > minMaxThresholdValue))
+                            {
+                                thresholdExceded = true;
+                            }
+                        }
+                        break;
+                    
                     default:
                         Console.WriteLine("\tUnkown Sensor Reference");
                         break;
@@ -971,78 +1032,7 @@ namespace Project_FinchControl
 
         }
 
-        //static void AlarmSystemDisplaySetAlarmLeft(
-        //    Finch bobert,
-        //    string sensorsToMonitor,
-        //    string rangetype,
-        //    int minMaxThresholdValue,
-        //    int timeToMonitor
-        //    )
-        //{
-        //    double thresholdValue;
-        //    rangetype = "Minimum";
-        //    timeToMonitor = 5;
-        //    minMaxThresholdValue = 15;
-        //    int secondsElapsed=0;
-        //    bool thresholdExceded = false;
-        //    double currentTemperature;
-        //    do
-        //    {
-        //        //get and display current temp
-        //        currentTemperature = bobert.getTemperature();
-        //        Console.WriteLine($"current temp {currentTemperature} sec: {currentTemperature}");
-
-        //        bobert.wait(1000);
-        //        secondsElapsed++;
-        //        if (currentTemperature < minMaxThresholdValue)
-        //        {
-        //            thresholdExceded = true;
-        //        }
-
-        //        Console.WriteLine("stil monitoring temp");
-
-        //    } while (!thresholdExceded&& (secondsElapsed<= timeToMonitor));
-
-        //    if (thresholdExceded)
-        //    {
-        //        Console.WriteLine("exceeded");
-        //    }
-
-        //    else
-        //    {
-        //        Console.WriteLine("Not exceeded, time limit met");
-        //    }
-
-
-
-        //}
-
-        //static void AlarmSystemDisplaySetAlarmRight(
-        //    Finch bobert,
-        //    string sensorsToMonitor,
-        //    string rangetype,
-        //    int minMaxThresholdValue,
-        //    int timeToMonitor
-        //    )
-        //{
-
-
-
-        //}
-
-        // static void AlarmSystemDisplaySetAlarmBoth(
-        //    Finch bobert,
-        //    string sensorsToMonitor,
-        //    string rangetype,
-        //    int minMaxThresholdValue,
-        //    int timeToMonitor
-        //    )
-        //{
-
-
-
-
-        // }
+       
 
         static int AlarmSystemDisplayTimeToMonitor()
         {
@@ -1059,29 +1049,89 @@ namespace Project_FinchControl
             DisplayMenuPrompt("Alarm System");
             return timeToMonitor;
         }
-
-        static int AlarmSystemDisplayThresholdValue(string sensorsToMonitor, Finch Bobert)
+        static int AlarmSystemDisplayTempThresholdValue(string sensorsToMonitor, Finch Bobert)
         {
-            int thresholdValue = 0;
+            DisplayScreenHeader("Threshold Value");
+            int tempThresholdValue = 0;
+            int currentTemperatureValue = (int)Bobert.getTemperature();
+            switch (sensorsToMonitor.ToLower())
+            {
+                case "left light":
+                    Console.WriteLine("\t Please use the previous menu, case 'c' to set the light threshold value.");
+                    break;
+
+                case "right light":
+                    Console.WriteLine("\t Please use the previous menu, case 'c' to set the light threshold value.");
+                    break;
+
+                case "both lights":
+                    Console.WriteLine("\t Please use the previous menu, case 'c' to set the light threshold values.");
+
+                    break;
+
+                case "temperature":
+                    Console.WriteLine($"\tCurrent ambient temperature: {currentTemperatureValue} degrees celcius.");
+                    break;
+
+                case "all":
+                    Console.WriteLine("\t Please use the previous menu, case 'c' to set the temperature threshold value.");
+                    Console.WriteLine();
+                    Console.WriteLine($"\tCurrent ambient temperature: {currentTemperatureValue} degrees celcius.");
+                    break;
+
+                default:
+                    Console.WriteLine("\tUnkown Sensor Reference.");
+                    break;
+
+
+            }
+            // collect user inpout and validate
+            tempThresholdValue = ValidateInteger("\tEnter Threshold value for temperature: ", 0, 40);
+
+            //echo
+            Console.WriteLine($"\tUser defined temp threshold: {tempThresholdValue}");
+
+            DisplayMenuPrompt("Alarm System");
+            return tempThresholdValue;
+        }
+
+
+        static int AlarmSystemDisplayLightThresholdValue(string sensorsToMonitor, Finch Bobert)
+        {
+            int lightThresholdValue = 0;
+            
             int currentLeftSensorValue = Bobert.getLeftLightSensor();
             int currentRightSensorValue = Bobert.getRightLightSensor();
-
+            int currentTemperatureValue = (int)Bobert.getTemperature();
+            
             DisplayScreenHeader("Threshold Value");
             //display ambient, 1 hour 5 minutes or so into lecture
 
             switch (sensorsToMonitor.ToLower())
             {
-                case "left":
+                case "left light":
                     Console.WriteLine($"\tCurrent {sensorsToMonitor} sensor value: {currentLeftSensorValue} ");
                     break;
 
-                case "right":
+                case "right light":
                     Console.WriteLine($"\tCurrent {sensorsToMonitor} sensor value: {currentRightSensorValue} ");
                     break;
 
-                case "both":
+                case "both lights":
                     Console.WriteLine($"\tCurrent left sensor value: {currentLeftSensorValue} ");
                     Console.WriteLine($"\tCurrent right sensor value: {currentRightSensorValue} ");
+                    break;
+
+                case "temperature":
+                    Console.WriteLine($"\tCurrent ambient temperature: {currentTemperatureValue} degrees celcius.");
+                    Console.WriteLine("\t Please use the previous menu, case 'd' to set the temp threshold value");
+                    break;
+
+                case "all":
+                    Console.WriteLine($"\tCurrent left sensor value: {currentLeftSensorValue} ");
+                    Console.WriteLine($"\tCurrent right sensor value: {currentRightSensorValue} ");
+                    Console.WriteLine($"\tCurrent ambient temperature: {currentTemperatureValue} degrees celcius.");
+                    Console.WriteLine("\t Please use the previous menu, case 'd' to set the temp threshold value");
                     break;
 
                 default:
@@ -1090,12 +1140,13 @@ namespace Project_FinchControl
             }
 
             // collect user inpout and validate
-            thresholdValue = ValidateInteger("\tEnter Threshold value", 0, 255);
+            lightThresholdValue = ValidateInteger("\tEnter Threshold value for lights: ", 0, 255);
 
             //echo
-            Console.WriteLine($"\tUser defined threshold: {thresholdValue}" );
+            Console.WriteLine($"\tUser defined light threshold: {lightThresholdValue}" );
             DisplayMenuPrompt("Alarm System");
-            return thresholdValue;
+            return lightThresholdValue;
+            
         }
 
         static string AlarmSystemDisplaySetRangeType()
@@ -1115,19 +1166,23 @@ namespace Project_FinchControl
             return rangeType;
         }
 
-        static string AlarmSystemDisplaySetSensors()
+        static string AlarmSystemDisplaySetLightSensors()
         {
-            string sensorsToMonitor = "";
+            string SensorsToMonitor = "";
+            
+            DisplayScreenHeader("\tSensors To Monitor");
             //validate
-            DisplayScreenHeader("Sensors To Monitor");
+            SensorsToMonitor = validateStringInput(
+                "\tEnter sensors to Monitor[left light, right light, both lights, temperature, all]",
+                "left light, right light, temperature, all, or both lights please",
+                new string[] { "left light", "right light", "both lights", "all", "temperature" }
+                );
 
-            sensorsToMonitor = validateStringInput("\tEnter sensors to Monitor[left, right, both]", "left, right, or both please",
-                new string[] {"left", "right", "both" } );
-
-            Console.WriteLine($"You have chosen:{sensorsToMonitor}");
+            Console.WriteLine($"You have chosen:{SensorsToMonitor}");
+            
             DisplayMenuPrompt("Alarm system");
 
-            return sensorsToMonitor;
+            return SensorsToMonitor;
         }
 
 
@@ -1283,6 +1338,8 @@ namespace Project_FinchControl
 
         static string validateStringInput(string prompt, string error, string[] validInputs)
         {
+            // credit goes to jp from the online class for helping me with this
+
             bool validInput = false;
             string userinput = "";
             int index = 0;
