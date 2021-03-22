@@ -15,10 +15,33 @@ namespace Project_FinchControl
     // Application Type: Console
     // Author: Lovell, James
     // Dated Created: 2/19/2021
-    // Last Modified: 2/20/2021
+    // Last Modified: 3/22/2021
     //
     // **************************************************
 
+
+/// <summary>
+/// user commands
+/// </summary>
+    public enum Command
+    { 
+        NONE,
+        MOVEFORWARD,
+        MOVEBACKWARDS,
+        STOPMOTORS,
+        TURNLEFT,
+        TURNRIGHT,
+        WAIT,
+        LEDON,
+        LEDOFF,
+        NOTEON,
+        NOTEOFF,
+        LIGHTNOTEON,
+        LIGHTNOTEOFF,
+        GETTEMPERATURE,
+        DONE,
+    
+    }
     class Program
     {
         /// <summary>
@@ -99,7 +122,7 @@ namespace Project_FinchControl
                         break;
 
                     case "e":
-
+                        UserProgrammingDisplayMenuScreen(Bobert);
                         break;
 
                     case "f":
@@ -120,6 +143,306 @@ namespace Project_FinchControl
 
             } while (!quitApplication);
         }
+
+        /// <summary>
+        /// user programming menu
+        /// </summary>
+        /// <param name="Bobert"></param>
+        #region USER PROGRAMMING
+        static void UserProgrammingDisplayMenuScreen(Finch Bobert)
+        {
+            Console.CursorVisible = true;
+
+            bool quitMenu = false;
+            string menuChoice;
+
+            (int motorspeed, int ledBrightness, double waitSeconds, int noteFrequency) commandParameters;
+            commandParameters.motorspeed = 0;
+            commandParameters.ledBrightness = 0;
+            commandParameters.waitSeconds = 0;
+            commandParameters.noteFrequency = 0;
+            List<Command> commands = null;
+
+            do
+            {
+                DisplayScreenHeader("PROGRAMMING Menu");
+
+                //
+                // get user menu choice
+                //
+                Console.WriteLine("\ta) Set Command Parameters ");
+                Console.WriteLine("\tb) Add Commands");
+                Console.WriteLine("\tc) View Commands ");
+                Console.WriteLine("\td) Execute Commands");             
+                Console.WriteLine("\tq) Quit to Main Menu");
+                Console.Write("\t\tEnter Choice:");
+                menuChoice = Console.ReadLine().ToLower();
+
+                //
+                // process user menu choice
+                //
+                switch (menuChoice)
+                {
+                    case "a":
+                        commandParameters = UserProgrammingDisplayGetCommandParameters();
+                        break;
+
+                    case "b":
+                        commands = UserProgrammingDisplayGetFinchCommands();
+                        break;
+
+                    case "c":
+                        userProgrammingDisplayViewCommands(commands);
+                        break;
+
+                    case "d":
+                        userProgrammingDisplayExecuteCommands(Bobert, commands, commandParameters);
+                        break;
+              
+                    case "q":
+
+                        quitMenu = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tPlease enter a letter for the menu choice.");
+                        DisplayContinuePrompt();
+                        break;
+                }
+
+            } while (!quitMenu);
+        }
+
+       static void userProgrammingDisplayExecuteCommands(
+           Finch Bobert,
+           List<Command> commands,
+            (int motorspeed, int ledBrightness, double waitSeconds,int noteFrequency) commandParameters)
+        {
+            
+            int motorSpeed = commandParameters.motorspeed;
+            int ledBrightness = commandParameters.ledBrightness;
+            double waitSeconds = commandParameters.waitSeconds;
+            double programTemperature;
+            int noteFrequency = commandParameters.noteFrequency;
+            
+            DisplayScreenHeader("Execute commands");
+           
+            Console.WriteLine("\tThe Finch Robot will now execute all commands.");
+            
+            DisplayContinuePrompt();
+            
+            foreach (Command command in commands)
+            {
+                switch (command)
+                {
+                    case Command.NONE:
+                        Console.WriteLine();
+                        Console.WriteLine("\tDefault value error");
+                        Console.WriteLine();
+                        break;
+                    case Command.MOVEFORWARD:
+                        Bobert.setMotors(motorSpeed, motorSpeed);                       
+                        break;
+                    case Command.MOVEBACKWARDS:
+                        Bobert.setMotors(-motorSpeed, -motorSpeed);
+                        break;
+                    case Command.STOPMOTORS:
+                        Bobert.setMotors(0,0);
+                        break;
+                    case Command.TURNLEFT: 
+                        Bobert.setMotors(-motorSpeed, motorSpeed);
+                        break;
+                    case Command.TURNRIGHT: 
+                        Bobert.setMotors(motorSpeed, -motorSpeed);
+                        break;
+                    case Command.WAIT:
+                        int waitMilliSeconds = (int)(waitSeconds * 1000);
+                        Bobert.wait(waitMilliSeconds);
+                        break;
+                    case Command.LEDON:
+                        Bobert.setLED(ledBrightness,ledBrightness,ledBrightness);
+                        break;
+                    case Command.LEDOFF:
+                        Bobert.setLED(0, 0, 0);
+                        break;
+                    case Command.NOTEON:
+                        Bobert.noteOn(noteFrequency);
+                        break;
+                    case Command.NOTEOFF:
+                        Bobert.noteOff();
+                        break;                                    
+                    case Command.LIGHTNOTEON:
+                        Bobert.setLED(ledBrightness, ledBrightness, ledBrightness);
+                        Bobert.noteOn(noteFrequency);
+                        break;
+                    case Command.LIGHTNOTEOFF:
+                        Bobert.noteOff();
+                        Bobert.setLED(0,0,0);
+                        break;
+                    case Command.GETTEMPERATURE:
+                        programTemperature = Bobert.getTemperature();
+                        Console.WriteLine($"\tCurrent temperature: {programTemperature}");
+                        break;
+                    case Command.DONE:
+                        Bobert.setLED(0,0,0);
+                        Bobert.setMotors(0,0);
+                        Bobert.noteOff();
+                        break;
+                   
+                    default:
+                        Console.WriteLine();
+                        Console.WriteLine("\tUnkown value error");
+                        Console.WriteLine();
+                        //this loop is used to catch new commands being added to the enum list without being coded into the case structure
+                        break;
+                }
+                Console.WriteLine($"\tCommand: {command}");
+            }
+
+            DisplayContinuePrompt();
+        }
+        //***************************************************************
+        //display commands
+        //888888888888888888888888888888888888888888888888888888888888888
+        static void userProgrammingDisplayViewCommands(List<Command> commands)
+        {
+            DisplayScreenHeader("View Commands");
+
+            Console.WriteLine("\tCommand List");
+            Console.WriteLine("\t------------");
+            
+            foreach (Command command in commands)
+            {
+                Console.WriteLine("\t" + command);
+            }
+
+            DisplayMenuPrompt("User Programming");
+        }
+
+        //***************************************************************
+        //collect commands
+        //888888888888888888888888888888888888888888888888888888888888888
+        static List<Command> UserProgrammingDisplayGetFinchCommands()
+        {
+            List<Command> commands = new List<Command>();
+            bool isDone = false;
+            string userResponse;
+            
+            DisplayScreenHeader("User Commands");
+            //
+            //list commands for user
+            //
+            Console.WriteLine(" NONE," +
+                "MOVEFORWARD," +
+                "MOVEBACKWARDS," +
+                "STOPMOTORS," +
+                "TURNLEFT," +
+                "TURNRIGHT," +
+                "WAIT," +
+                "LEDON, " +
+                "LEDOFF, " +
+                "NOTEON," +
+                "NOTEOFF," +
+                "LIGHTNOTEON," +
+                "LIGHTNOTEOFF," +
+                "GETTEMPERATURE," +
+                "DONE");
+
+            DisplayContinuePrompt();
+
+            do
+            {
+                Console.Write("Command:");
+                userResponse = validateStringInput("Enter command",
+                    "enter one of the above",
+                     new string[] { "MOVEFORWARD", "MOVEBACKWARDS", "STOPMOTORS", "TURNLEFT", "TURNRIGHT", "WAIT", "LEDON", "LEDOFF", "NOTEON", "NOTEOFF", "GETTEMPERATURE", "LIGHTNOTEON", "LIGHTNOTEOFF", "DONE" });
+                
+
+                if (userResponse != "DONE")
+                {
+                    if (Enum.TryParse(userResponse.ToUpper(), out Command command ))
+                    {
+                        commands.Add(command);
+                    }
+
+                    else
+                    {
+                        Console.WriteLine("\tPlease enter one of the following: " +
+                            "\ndone" +
+                            "\nmoveforward" +
+                            "\nmovebackwards" +
+                            "\nstopmotors" +
+                            "\nwait" +
+                            "\nturnleft" +
+                            "\nturnright" +
+                            "\nledon" +
+                            "\nledoff" +
+                            "\nnoteon" +
+                            "\nnoteoff" +
+                            "\nlightnoteon" +
+                            "\nlightnoteoff" +
+                            "\ngettemperature" 
+                            );
+                    }
+                }
+
+                else
+                {
+                    isDone = true;
+                }
+
+            } while (!isDone);
+
+            DisplayContinuePrompt();
+
+            return commands;
+        }
+
+        //***************************************************************
+        // gather variables
+        //888888888888888888888888888888888888888888888888888888888888888
+        static (int motorspeed, int ledBrightness, double waitSeconds, int noteFrequency) UserProgrammingDisplayGetCommandParameters()
+        {
+            (int motorspeed, int ledBrightness, double waitSeconds, int noteFrequency) commandParameters;
+
+            DisplayScreenHeader("command parameters"); 
+
+            //
+            //get values from user and validate
+            //
+
+            Console.Write("\tMotor Speed:");            
+            commandParameters.motorspeed = ValidateInteger("\nEnter number for motor speed between 0-255",0,255);
+            
+            Console.Write("\tLed Brightness:");
+            commandParameters.ledBrightness = ValidateInteger("\nEnter number from 0-255 for led brightness",0,255);
+
+            Console.Write("\tWait time seconds:");
+            commandParameters.waitSeconds = ValidateInteger("\nEnter number for wait time between commands",0,10);
+
+            Console.Write("\tNote Frequency:");
+            commandParameters.noteFrequency = ValidateInteger("\nEnter number from 0-5000 for a note frequency", 0, 5000);
+
+            DisplayContinuePrompt();
+            //
+            //reitterate for user.
+            //
+            Console.WriteLine($"\tJust checking, you input:" +
+                $"\t{commandParameters.ledBrightness} led level, " +
+                $"\t{commandParameters.motorspeed} motor speed," +
+                $"\t{commandParameters.waitSeconds} seconds between commands, " +
+                $"\t and {commandParameters.noteFrequency} hertz for the sound");
+
+            DisplayContinuePrompt();
+           
+            return commandParameters;
+        }
+        #endregion
+
+
+
+
 
         #region TALENT SHOW
 
