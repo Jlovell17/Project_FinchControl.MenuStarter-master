@@ -50,7 +50,8 @@ namespace Project_FinchControl
         /// <param name="args"></param>
         static void Main(string[] args)
         {
-            SetTheme();
+            
+            DataDisplaySetTheme();
 
             DisplayWelcomeScreen();
             DisplayMenuScreen();
@@ -60,10 +61,114 @@ namespace Project_FinchControl
         /// <summary>
         /// setup the console theme
         /// </summary>
-        static void SetTheme()
+        static (ConsoleColor foregroundColor, ConsoleColor backgroundColor) ReadThemeData()
         {
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.BackgroundColor = ConsoleColor.White;
+            string dataPath = "..\\..\\data\\Theme.txt";
+            string[] themecolors;
+
+            ConsoleColor foregroundColor;
+            ConsoleColor backgroundColor;
+
+            themecolors = File.ReadAllLines(dataPath);
+
+            Enum.TryParse(themecolors[0], true, out foregroundColor);
+            Enum.TryParse(themecolors[1], true, out backgroundColor);
+
+            return (foregroundColor, backgroundColor);
+        }
+
+        /// <summary>
+        /// writre data to theme text
+        /// </summary>
+        /// <param name="background"></param>
+        /// <param name="foreground"></param>
+        static void WriteThemeData(ConsoleColor background, ConsoleColor foreground)
+        {
+            string dataPath = "..\\..\\data\\Theme.txt";
+
+            File.WriteAllText(dataPath, background.ToString() + "\n");
+            File.AppendAllText(dataPath, foreground.ToString());
+
+        }
+
+        static ConsoleColor GetConsoleColorFromUser(string property)
+        {
+            ConsoleColor consoleColor;
+            bool validConsoleColor;
+
+            do
+            {
+                Console.Write($"\tEnter a value for the {property}: ");
+                validConsoleColor = Enum.TryParse<ConsoleColor>(Console.ReadLine(), true, out consoleColor);
+
+                if (!validConsoleColor)
+                {
+                    Console.WriteLine("\n\t**** It appears you did not provide a valid console color. Please try again.****\n");
+                }
+
+                else
+                {
+                    validConsoleColor = true;   
+                }
+
+            } while (!validConsoleColor);
+            
+            return consoleColor;
+        }
+
+
+        static void DataDisplaySetTheme()
+        {
+            (ConsoleColor foregroundColor, ConsoleColor backgroundColor) themeColors;
+            bool themeChosen = false;
+
+            //
+            // set current theme from data
+            //
+            themeColors = ReadThemeData();
+            Console.ForegroundColor = themeColors.foregroundColor;
+            Console.BackgroundColor = themeColors.backgroundColor;
+            Console.Clear();
+            DisplayScreenHeader("set application theme");
+
+            Console.WriteLine($"\tCurrent Foreground Color: {Console.ForegroundColor}");
+            Console.WriteLine($"\tCurrent Background Color: {Console.BackgroundColor}");
+            Console.WriteLine();
+
+            
+            if (validateStringInput("Does this theme work for you?", "yes or no please.", new string[] { "yes", "no" }) == "no")
+            {
+                do
+                {
+                    themeColors.foregroundColor = GetConsoleColorFromUser("foreground");
+                    themeColors.backgroundColor = GetConsoleColorFromUser("background");
+
+                    //
+                    // set new theme from user
+                    //
+                    Console.ForegroundColor = themeColors.foregroundColor;
+                    Console.BackgroundColor = themeColors.backgroundColor;
+                    Console.Clear();
+                    DisplayScreenHeader("Set Application Theme");
+                    Console.WriteLine($"\tPlease select a new foreground color. Selection: {Console.ForegroundColor}");
+                    Console.WriteLine($"\tPlease select a new background color. Selection: {Console.BackgroundColor}");
+
+                    Console.WriteLine();
+                 
+                    if (validateStringInput("Does this theme work for you?","yes or no please.",new string[] { "yes", "no" }) == "yes")
+                    {
+                        themeChosen = true;
+                        WriteThemeData(themeColors.foregroundColor, themeColors.backgroundColor);
+                    }
+
+
+
+                } while (!themeChosen);
+
+            }
+            
+            DisplayContinuePrompt();
+
         }
 
         ///all methods and calls should be nestled into the menu screen.     
